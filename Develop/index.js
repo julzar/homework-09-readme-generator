@@ -1,7 +1,6 @@
-require('dotenv').config()
-const axios = require('axios');
+require('dotenv').config();
 const inquirer = require('inquirer');
-const fs = require('fs')
+const fs = require('fs');
 const generateMarkdown = require('./utils/generateMarkdown');
 const getUser = require('./utils/api');
 
@@ -67,31 +66,30 @@ function question(q) {
 function writeToFile(fileName, data) {
     fs.writeFile(fileName, data, function(err) {
         if (err) {
-            throw new Error(err)
+            throw err
         }
         else {
-            console.log(`File written successfully to "my_readme".`)
+            console.log(`Success! File written to "my_readme".`)
         }
     })
 };
 
 async function init(filename, askUserData, askAppData) {
     try {
-        let userData;
-        let user = await question(askUserData);
-        try {
-            userData = await getUser(user.username);
-        }
-        catch {
-            user = await question(askUserData);
-            userData = await getUser(user.username);
-        }
+        
+        const user = await question(askUserData);
+        const userData = await getUser(user.username);
+
+        if (userData == undefined) {
+            return init('./my_readme/README.md', questions[0], questions[1]);
+        };
+        
         const appData = await question(askAppData);
-        const markdownData = await generateMarkdown(userData, appData);
-        writeToFile(filename, markdownData)
+        const markdownData = generateMarkdown(userData, appData);
+        writeToFile(filename, markdownData);
     }
     catch (err) {
-        throw new Error(err)
+        throw err
     }
 }
 

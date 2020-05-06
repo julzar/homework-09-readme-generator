@@ -18,10 +18,10 @@ const axios = require("axios");
         image: response.data.avatar_url
       }
     } catch (err) {
-        throw new Error(`${err.response.status}: ${err.response.statusText}`)
+      console.log(`Error! ${err.response.status}: ${err.response.statusText}`)
     };
+    
     return userData;
   };
-
-
+  
 module.exports = getUser
